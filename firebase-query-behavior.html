@@ -42,6 +42,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         reflectToAttribute: true
       },
 
+      /**
+       * If true, changes to lcoation are ignored.
+       */
+      writeOnly: {
+        type: Boolean,
+        value: false,
+        reflectToAttribute: true
+      },
+
       _receivingRemoteChanges: {
         type: Boolean,
         value: false
@@ -104,11 +113,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     _listenToQuery: function(query) {
       this._log('Adding Firebase event handlers.');
-      query.on('value', this._onQueryValue, this._onQueryCancel, this);
-      query.on('child_added', this._onQueryChildAdded, this._onQueryCancel, this);
-      query.on('child_removed', this._onQueryChildRemoved, this._onQueryCancel, this);
-      query.on('child_changed', this._onQueryChildChanged, this._onQueryCancel, this);
-      query.on('child_moved', this._onQueryChildMoved, this._onQueryCancel, this);
+      if (!this.writeOnly) {
+        query.on('value', this._onQueryValue, this._onQueryCancel, this);
+        query.on('child_added', this._onQueryChildAdded, this._onQueryCancel, this);
+        query.on('child_removed', this._onQueryChildRemoved, this._onQueryCancel, this);
+        query.on('child_changed', this._onQueryChildChanged, this._onQueryCancel, this);
+        query.on('child_moved', this._onQueryChildMoved, this._onQueryCancel, this);
+      }
     },
 
     _stopListeningToQuery: function(query) {
